@@ -1,0 +1,24 @@
+guardar_pedido boka 1 ...7
+guardar_plato boka 1 asadoconfritas 1
+guardar_plato boka 2 asadoconfritas 2
+guardar_plato boka 5 bondiolita 1
+guardar_plato boka 3 asadoconfritas 1
+guardar_plato boka 6 bondiolita 4
+obtener_pedido boka 1
+guardar_plato boka 4 choripan 20
+obtener_pedido boka 2
+guardar_plato boka 7 morcipan 1
+guardar_plato boka 1 asadoconfritas 1
+guardar_plato boka 3 asadoconfritas 1
+obtener_pedido boka 3
+confirmar_pedido boka 1 ... 7
+plato_listo boka 1 asadoconfritas
+plato_listo boka 2 asadoconfritas
+plato_listo boka 3 asadoconfritas
+plato_listo boka 1 asadoconfritas
+plato_listo boka 2 asadoconfritas
+plato_listo boka 5 bondiolita
+plato_listo boka 6 bondiolita (4 veces)
+plato_listo boka 4 choripan (20 veces)
+plato_listo boka 7 morcipan
+finalizar_pedido 1...7

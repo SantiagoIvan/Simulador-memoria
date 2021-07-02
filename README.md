@@ -13,6 +13,7 @@ Cliente: oficia de consola y por medio de una conexión via sockets, envía mens
 - plato_listo <restaurante> <nro de pedido> <nombre de plato>: se van preparando de a 1, y cuando esten todos listos, es decir, cantidad pedida= cantidad preparada,
 recien ahi el mensaje finalizar_pedido podrá ser enviado exitósamente.
 - finalizar_pedido <restaurante> <nro de pedido>
+- prueba: se inicia el envío de todos los mensajes utilizados en la prueba final del modulo.
 
 Comanda: proceso que simula el funcionamiento de una memoria con Segmentación Paginada, y además simula el funcionamiento de una memoria virtual y sus procesos de detección de víctima y swapeo. El algoritmo de selección de víctima puede ser Clock modificado o LRU y son modificables desde el config ubicado en comanda/cfg/comanda.config
 

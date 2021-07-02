@@ -15,3 +15,7 @@ recien ahi el mensaje finalizar_pedido podrá ser enviado exitósamente.
 - finalizar_pedido <restaurante> <nro de pedido>
 
 Comanda: proceso que simula el funcionamiento de una memoria con Segmentación Paginada, y además simula el funcionamiento de una memoria virtual y sus procesos de detección de víctima y swapeo. El algoritmo de selección de víctima puede ser Clock modificado o LRU y son modificables desde el config ubicado en comanda/cfg/comanda.config
+
+  
+Con los comandos ./exec pueden correr alguno de los procesos, ubicandose previamente en alguna de las carpetas Cliente o Comanda.
+Con ./vexec pueden correr los procesos usando valgrind.

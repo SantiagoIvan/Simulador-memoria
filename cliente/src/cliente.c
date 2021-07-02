@@ -2,15 +2,18 @@
 #include <sysexits.h>
 #include <signal.h>
 
-int main(void) {
+int main(void)
+{
     char *linea;
     signal(SIGINT, catch_signal);
     inicializar_modulo();
     log_info(logger, "CLIENTE: Iniciado");
 
-    while (1) {    
+    while (1)
+    {
         linea = readline(">");
-        if (!strcmp(linea,"")) continue;
+        if (!strcmp(linea, ""))
+            continue;
         add_history(linea);
         leer_comando(linea);
         free(linea);
@@ -18,55 +21,58 @@ int main(void) {
     terminar_programa();
 }
 
-void inicializar_modulo(){
+void inicializar_modulo()
+{
     config = config_create("cfg/cliente.config");
     logger = log_create(config_get_string_value(config, "ARCHIVO_LOG"), "CLIENTE", true, LOG_LEVEL_INFO);
-        
+
     ip_target = config_get_string_value(config, "IP_COMANDA");
     puerto_target = config_get_string_value(config, "PUERTO_COMANDA");
 
     return;
 }
 
-
-void leer_comando(char *linea) {
+void leer_comando(char *linea)
+{
 
     char **palabras = string_split(linea, " ");
     Codigo_Operacion operacion = get_codigo_operacion_by_string(palabras[0]);
 
-    switch (operacion) {
-        case GUARDAR_PEDIDO:
-            guardar_pedido(palabras);
-            break;
-        case GUARDAR_PLATO:
-            guardar_plato(palabras);
-            break;
-        case OBTENER_PEDIDO:
-            obtener_pedido(palabras);
-            break;
-        case CONFIRMAR_PEDIDO:
-            confirmar_pedido(palabras);
-            break;
-        case PLATO_LISTO:
-            plato_listo(palabras);
-            break;
-        case FINALIZAR_PEDIDO:
-            finalizar_pedido(palabras);
-            break;
-        case SALIR:
-            free(linea);
-            free_palabras(palabras, 1);
-            terminar_programa();
-        case PRUEBA_FINAL_COMANDA:
-            prueba_final_comanda();
-            break;
-        default:
-            log_error(logger, "CLIENTE: comando invalido");
+    switch (operacion)
+    {
+    case GUARDAR_PEDIDO:
+        guardar_pedido(palabras);
+        break;
+    case GUARDAR_PLATO:
+        guardar_plato(palabras);
+        break;
+    case OBTENER_PEDIDO:
+        obtener_pedido(palabras);
+        break;
+    case CONFIRMAR_PEDIDO:
+        confirmar_pedido(palabras);
+        break;
+    case PLATO_LISTO:
+        plato_listo(palabras);
+        break;
+    case FINALIZAR_PEDIDO:
+        finalizar_pedido(palabras);
+        break;
+    case SALIR:
+        free(linea);
+        free_palabras(palabras, 1);
+        terminar_programa();
+    case PRUEBA_FINAL_COMANDA:
+        prueba_final_comanda();
+        break;
+    default:
+        log_error(logger, "CLIENTE: comando invalido");
     }
     return;
 }
 
-void guardar_pedido(char **comando_ingresado){
+void guardar_pedido(char **comando_ingresado)
+{
     char *resto = comando_ingresado[1];
     int id_pedido = atoi(comando_ingresado[2]);
     log_info(logger, "CLIENTE: guardar_pedido %s %i", resto, id_pedido);
@@ -77,20 +83,23 @@ void guardar_pedido(char **comando_ingresado){
     enviar_mensaje(mensaje, conexion);
 
     Descripcion *respuesta = recibir_descripcion(conexion);
-    if(respuesta->result){
+    if (respuesta->result)
+    {
         log_info(logger, "CLIENTE: GUARDAR_PEDIDO: Ok");
-    }else
+    }
+    else
     {
         log_error(logger, "CLIENTE: GUARDAR_PEDIDO: %s", respuesta->descripcion);
     }
-    
+
     free_palabras(comando_ingresado, 3);
     free(respuesta->descripcion);
     free(respuesta);
     liberar_conexion(conexion);
 }
 
-void guardar_plato(char **comando_ingresado){
+void guardar_plato(char **comando_ingresado)
+{
     char *resto = comando_ingresado[1];
     int id_pedido = atoi(comando_ingresado[2]);
     char *plato = comando_ingresado[3];
@@ -103,9 +112,11 @@ void guardar_plato(char **comando_ingresado){
     enviar_mensaje(mensaje, conexion);
 
     Descripcion *respuesta = recibir_descripcion(conexion);
-    if(respuesta->result){
+    if (respuesta->result)
+    {
         log_info(logger, "CLIENTE: GUARDAR_PLATO: Ok");
-    }else
+    }
+    else
     {
         log_error(logger, "CLIENTE: GUARDAR_PLATO: %s", respuesta->descripcion);
     }
@@ -114,11 +125,13 @@ void guardar_plato(char **comando_ingresado){
     liberar_conexion(conexion);
 }
 
-void obtener_pedido(char **comando_ingresado){
+void obtener_pedido(char **comando_ingresado)
+{
     char *resto = comando_ingresado[1];
     int id_pedido = atoi(comando_ingresado[2]);
 
-    void liberar_plato(Plato *plato){
+    void liberar_plato(Plato * plato)
+    {
         free(plato->nombre);
         free(plato);
     }
@@ -129,17 +142,19 @@ void obtener_pedido(char **comando_ingresado){
 
     Descripcion *descripcion = recibir_descripcion(conexion);
 
-    if (descripcion->result){
+    if (descripcion->result)
+    {
         log_info(logger, "CLIENTE: OBTENER_PEDIDO: Ok");
         Codigo_Operacion cod = recibir_operacion(conexion);
-        Payload *payload = (Payload *) malloc(sizeof(Payload));
+        Payload *payload = (Payload *)malloc(sizeof(Payload));
         payload->stream = recibir_payload(&(payload->size), conexion);
 
         t_list *platos = list_create();
         Estado_Pedido estado;
         deserializar_respuesta_obtener_pedido(payload->stream, platos, &estado);
         log_info(logger, "Estado del pedido: %i", estado);
-        for(int i=0; i<list_size(platos); i++){
+        for (int i = 0; i < list_size(platos); i++)
+        {
             printf("\n");
             Plato *plato = list_get(platos, i);
             log_info(logger, "Nombre del plato %s: ", plato->nombre);
@@ -148,7 +163,8 @@ void obtener_pedido(char **comando_ingresado){
             printf("\n");
         }
         list_destroy_and_destroy_elements(platos, liberar_plato);
-    }else
+    }
+    else
     {
         log_error(logger, "CLIENTE: OBTENER_PEDIDO: %s", descripcion->descripcion);
     }
@@ -158,9 +174,10 @@ void obtener_pedido(char **comando_ingresado){
     liberar_conexion(conexion);
 }
 
-void confirmar_pedido(char **comando_ingresado){
-    int id_pedido = atoi(comando_ingresado[1]);
-    char *nombre_restaurante = comando_ingresado[2];
+void confirmar_pedido(char **comando_ingresado)
+{
+    int id_pedido = atoi(comando_ingresado[2]);
+    char *nombre_restaurante = comando_ingresado[1];
 
     log_info(logger, "CLIENTE: Confirmar_Pedido %i %s", id_pedido, nombre_restaurante);
 
@@ -171,9 +188,11 @@ void confirmar_pedido(char **comando_ingresado){
     enviar_mensaje(mensaje, conexion);
 
     Descripcion *respuesta = recibir_descripcion(conexion);
-    if(respuesta->result){
+    if (respuesta->result)
+    {
         log_info(logger, "CLIENTE: CONFIRMAR_PEDIDO: Ok");
-    }else
+    }
+    else
     {
         log_error(logger, "CLIENTE: CONFIRMAR_PEDIDO: %s", respuesta->descripcion);
     }
@@ -183,7 +202,8 @@ void confirmar_pedido(char **comando_ingresado){
     liberar_conexion(conexion);
 }
 
-void plato_listo(char **comando_ingresado){
+void plato_listo(char **comando_ingresado)
+{
     char *resto = comando_ingresado[1];
     int id_pedido = atoi(comando_ingresado[2]);
     char *plato = comando_ingresado[3];
@@ -196,9 +216,11 @@ void plato_listo(char **comando_ingresado){
     enviar_mensaje(mensaje, conexion);
 
     Descripcion *respuesta = recibir_descripcion(conexion);
-    if(respuesta->result){
+    if (respuesta->result)
+    {
         log_info(logger, "CLIENTE: PLATO_LISTO: Ok");
-    }else
+    }
+    else
     {
         log_error(logger, "CLIENTE: PLATO_LISTO: %s", respuesta->descripcion);
     }
@@ -208,10 +230,11 @@ void plato_listo(char **comando_ingresado){
     liberar_conexion(conexion);
 }
 
-void finalizar_pedido(char **comando_ingresado){
+void finalizar_pedido(char **comando_ingresado)
+{
     char *resto = comando_ingresado[1];
     int id_pedido = atoi(comando_ingresado[2]);
-    log_info(logger, "CLIENTE: Finalizar_ Pedido %s %i",resto, id_pedido);
+    log_info(logger, "CLIENTE: Finalizar_ Pedido %s %i", resto, id_pedido);
 
     int conexion = crear_conexion(ip_target, puerto_target);
 
@@ -220,13 +243,14 @@ void finalizar_pedido(char **comando_ingresado){
     enviar_mensaje(mensaje, conexion);
 
     Descripcion *respuesta = recibir_descripcion(conexion);
-    if(respuesta->result){
+    if (respuesta->result)
+    {
         log_info(logger, "CLIENTE: FINALIZAR_PEDIDO: Ok");
-    }else
+    }
+    else
     {
         log_error(logger, "CLIENTE: FINALIZAR_PEDIDO: %s", respuesta->descripcion);
     }
-
 
     free_palabras(comando_ingresado, 3);
     free(respuesta->descripcion);
@@ -235,7 +259,8 @@ void finalizar_pedido(char **comando_ingresado){
     return;
 }
 
-void free_palabras(char **palabras, int size) {
+void free_palabras(char **palabras, int size)
+{
     for (int i = 0; i < size; i++)
         free(palabras[i]);
 
@@ -244,18 +269,21 @@ void free_palabras(char **palabras, int size) {
     return;
 }
 
-void catch_signal(int signal) {
+void catch_signal(int signal)
+{
     terminar_programa();
 }
 
-int terminar_programa() {
+int terminar_programa()
+{
     log_info(logger, "CLIENTE: Exit");
     log_destroy(logger);
     config_destroy(config);
     exit(0);
 }
 
-void prueba_final_comanda(){
+void prueba_final_comanda()
+{
     guardar_pedido(string_split("guardar_pedido boka 1", " "));
     guardar_pedido(string_split("guardar_pedido boka 2", " "));
     guardar_pedido(string_split("guardar_pedido boka 3", " "));
@@ -288,19 +316,19 @@ void prueba_final_comanda(){
     sleep(1);
     obtener_pedido(string_split("obtener_pedido boka 3", " "));
     sleep(1);
-    confirmar_pedido(string_split("confirmar_pedido 1 boka", " "));
+    confirmar_pedido(string_split("confirmar_pedido boka 1", " "));
     sleep(1);
-    confirmar_pedido(string_split("confirmar_pedido 2 boka", " "));
+    confirmar_pedido(string_split("confirmar_pedido boka 2", " "));
     sleep(1);
-    confirmar_pedido(string_split("confirmar_pedido 3 boka", " "));
+    confirmar_pedido(string_split("confirmar_pedido boka 3", " "));
     sleep(1);
-    confirmar_pedido(string_split("confirmar_pedido 4 boka", " "));
+    confirmar_pedido(string_split("confirmar_pedido boka 4", " "));
     sleep(1);
-    confirmar_pedido(string_split("confirmar_pedido 5 boka", " "));
+    confirmar_pedido(string_split("confirmar_pedido boka 5", " "));
     sleep(1);
-    confirmar_pedido(string_split("confirmar_pedido 6 boka", " "));
+    confirmar_pedido(string_split("confirmar_pedido boka 6", " "));
     sleep(1);
-    confirmar_pedido(string_split("confirmar_pedido 7 boka", " "));
+    confirmar_pedido(string_split("confirmar_pedido boka 7", " "));
     sleep(1);
     plato_listo(string_split("plato_listo boka 1 asadoconfritas", " "));
     sleep(1);

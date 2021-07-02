@@ -51,4 +51,6 @@ void confirmar_pedido(char **comando_ingresado);
 
 void prueba_final_comanda();
 
+void free_palabras(char **, int);
+
 #endif

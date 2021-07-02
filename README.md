@@ -6,11 +6,11 @@ Consiste en un modulo del Trabajo practico de la materia Sistemas Operativos de 
 Está dividido en 2 procesos:
 
 Cliente: oficia de consola y por medio de una conexión via sockets, envía mensajes a la Memoria llamada Comanda.
-- guardar_pedido <restaurante> <nro de pedido>
-- guardar_plato <restaurante>  <nro de pedido> <nombre de plato> <cantidad>
-- obtener_pedido <restaurante> <nro de pedido>
-- confirmar_pedido <restaurante> <nro de pedido>
-- plato_listo <restaurante> <nro de pedido> <nombre de plato>: se van preparando de a 1, y cuando esten todos listos, es decir, cantidad pedida= cantidad preparada,
+- guardar_pedido restaurante nro de pedido
+- guardar_plato restaurante  nro_de_pedido nombre_de_plato cantidad
+- obtener_pedido restaurante nro_de_pedido
+- confirmar_pedido restaurante nro_de_pedido
+- plato_listo restaurante nro_de_pedido nombre_de_plato: se van preparando de a 1, y cuando esten todos listos, es decir, cantidad pedida= cantidad preparada,
 recien ahi el mensaje finalizar_pedido podrá ser enviado exitósamente.
 - finalizar_pedido <restaurante> <nro de pedido>
 - prueba: se inicia el envío de todos los mensajes utilizados en la prueba final del modulo.
